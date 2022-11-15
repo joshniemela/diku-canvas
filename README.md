@@ -81,11 +81,9 @@ The best show-cases for using the library are
 - `examples/color_boxes.fsx`
 - `examples/keyboard_example.fsx`
 - `examples/spiral.fsx`
-- `examples/turtle.fsx` (eventually)
+- `examples/turtle.fsx`
 
-Note that it is not all the examples in the `examples` directory that
-have been ported to the current version of the Canvas library.
-
+Note that the fun_img example hasn't been ported from ImgUtil yet.
 
 ## How to build the Canvas library itself (if you want to contribute)
 
@@ -110,6 +108,30 @@ Then install [SDL2 and SDL2_image](https://www.libsdl.org/index.php):
   * On **Arch** (and probably **Manjaro**), `sdl2` is available in `extra`:
 
         sudo pacman -S sdl2 sdl2_image
+  * On **NixOS** the following config has to be added so that Canvas won't fail silently:  
+    <details> 
+    <summary>Config file for NixOS</summary>
+        ```nix
+        { pkgs, ... }:
+        
+        let dotnetfhs = pkgs.buildFHSUserEnv {
+            name = "dotnet";
+            targetPkgs = pkgs: (with pkgs; [
+                dotnet-sdk
+            ]) ++ (with pkgs.xorg; [
+                libX11
+                libXrandr
+                libXcursor
+            ]);
+            runScript = "dotnet";
+        };
+        in {
+            home.packages = [ dotnetfhs ];
+            # OR
+            # environment.systemPackages = [ dotnetfhs ];
+        }
+        ```
+    </details>
 
   * On **Windows** you need `SDL2.dll` and `SDL2_image.dll` in a
     search path available to dotnet.  The `.dll`'s in the `lib/`
